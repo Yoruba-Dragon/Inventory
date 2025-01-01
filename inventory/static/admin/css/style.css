@@ -1,0 +1,120 @@
+{% load static %}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Poppins, sans-serif;
+    display: flex; /* Use flexbox to split the screen */
+    height: 100vh; /* Full screen height */
+}
+
+.left-section {
+    flex: 1; /* Takes up half the screen */
+    background: url( "{% static 'images/pecan bg.jpg'}" ) no-repeat center center/cover; /* Replace with your image */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative; /* Needed for the overlay to work */
+}
+
+.left-section::before {
+    content: ""; /* Empty content for the overlay */
+    position: absolute; /* Overlay positioned over the image */
+    top: 0;
+    left: 0;
+    width: 100%; /* Cover the entire left section */
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Black overlay with 70% opacity */
+    z-index: 1; /* Ensure overlay appears above the image */
+}
+
+.left-section h1,
+.left-section p {
+    position: relative; /* Ensure text appears above the overlay */
+    z-index: 2; /* Text above overlay */
+}
+
+.right-section {
+    flex: 1; /* Takes up half the screen */
+    background: url('right side.png') no-repeat center center/cover; /* Replace with your image */
+    background-color: white; /* Fallback if the image doesn't load */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Needed for the overlay to work */
+}
+
+
+
+.right-section h1,
+.right-section p {
+    position: relative; /* Ensure text appears above the overlay */
+    z-index: 2; /* Text above overlay */
+}
+
+
+button {
+    padding: 5px 0; /* Adjusted padding for height */
+    margin: 10px;
+    font-size: 15px; /* Consistent font size */
+    border-radius: 4px; /* Slightly rounded corners */
+    border: none;
+    cursor: pointer;
+    display: block;
+    width: 400px; /* Fixed width for both buttons */
+    height: 50px;
+    text-align: center; /* Center-align text */
+    justify-content:center;
+}
+.left-section-content{
+    margin: 0;
+    position: relative;
+    justify-content: top;
+    text-align: left;
+    width: 100%; 
+}
+header {
+    position: absolute; /* Makes the logo float at the top-left */
+    top: 20px; /* Adjust space from the top */
+    left: 20px; /* Adjust space from the left */
+    z-index: 10; /* Ensure the logo is above other elements */
+  }
+  
+.logo {
+    width: 200px; /* Adjust the size of the logo */
+  }
+  
+  
+.title {
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+   
+    margin: 30px;
+}
+
+
+button.login {
+    background-color: #0096f4;
+    color: white;
+}
+
+button.signup {
+    background-color: #fff;
+    color: #0096f4;
+    border: 2px solid #0096f4; /* Add a border for contrast */
+}
+button.login:hover {
+    background-color: #fff;
+    color: #0096f4;
+    border: 2px solid #0096f4;
+}
+button.signup:hover {
+    background-color: #0096f4;
+    color: white;
+    border: none; /* Remove border on hover */
+}

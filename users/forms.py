@@ -1,36 +1,92 @@
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from django.contrib.auth.models import User
-
 from django import forms
-from .models import UserProfile, User,Products
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from .models import CustomUser, Products
 
-
-class ProfileForm(forms.ModelForm):# profile creation form
+class CustomUserCreationForm(UserCreationForm):
+    
+    email= forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+    password1= forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter Password'}),
+    password2= forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
+    department = forms.Select(attrs={'class': 'form-control', 'placeholder': 'Department'}),
+    picture = forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
     class Meta:
-        model = UserProfile
-        fields = '__all__'
+       
+        model = CustomUser
+        fields = ('username', 'email', 'password1', 'password2', 'department', 'picture')
 
-class SignUpForm(UserCreationForm):# user signup form
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    password1 = forms.CharField(max_length=50, required=True, widget=forms.PasswordInput(attrs={'placeholder':'Password', 'class':'form-control', 'data-toggle':'password', 'id':'password'}))
-    password2 = forms.CharField(max_length=50, required=True, widget=forms.PasswordInput(attrs={'placeholder':'Confirm Password', 'class':'form-control', 'data-toggle':'password', 'id':'password'}))
+        
+    # Remove help texts, including for password fields
+   
+    
+
+
+
+
+
+    def clean_picture(self):
+        picture = self.cleaned_data.get('picture')
+        if picture:
+            # Example validation: Check file size (max 5MB)
+            if picture.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("The file size is too large. Max size is 5MB.")
+        return picture
+
+
+class PasswordChangingForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Enter Old Password',
+            'class': 'form-control',
+            'data-toggle': 'password',
+            'id': 'password'
+        })
+    )
+    new_password1 = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Enter New Password',
+            'class': 'form-control',
+            'data-toggle': 'password',
+            'id': 'new_password'
+        })
+    )
+    new_password2 = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Confirm New Password',
+            'class': 'form-control',
+            'data-toggle': 'password',
+            'id': 'confirm_new_password'
+        })
+    )
+
     class Meta:
-        model = User
-        fields = ('username', 'email', 'password1', 'password2')
-
-class PasswordChangingForm(PasswordChangeForm):# password changing form
-    old_password = forms.CharField(max_length=50, required=True, widget=forms.PasswordInput(attrs={'placeholder':'Enter Old Password', 'class':'form-control', 'data-toggle':'password', 'id':'password'}))
-    new_password1 = forms.CharField(max_length=50, required=True, widget=forms.PasswordInput(attrs={'placeholder':'Enter New Password', 'class':'form-control', 'data-toggle':'password', 'id':'new_password'}))
-    new_password2 = forms.CharField(max_length=50, required=True, widget=forms.PasswordInput(attrs={'placeholder':'Confirm New Password', 'class':'form-control', 'data-toggle':'password', 'id':'confirm_new_password'}))
-
-
-    class Meta:
-        model = User
-        fields = ('old_password','new_password1','new_password2')
+        model = CustomUser
+        fields = ('old_password', 'new_password1', 'new_password2')
 
 
 class ProductsForm(forms.ModelForm):
     class Meta:
         model = Products
         fields = '__all__'
+        widgets = {
+            'product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'product_description': forms.Textarea(attrs={'class': 'form-control'}),
+            'product_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'})
+        }
+        help_texts = {
+            'product_name': 'Enter the name of the product.',
+            'product_description': 'Provide a brief description of the product.',
+            'product_quantity': 'Enter the available quantity of the product.',
+        }
 
+    def clean_product_quantity(self):
+        quantity = self.cleaned_data.get('product_quantity')
+        if quantity <= 0:
+            raise forms.ValidationError("Quantity must be a positive number.")
+        return quantity
