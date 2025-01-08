@@ -51,7 +51,7 @@ header {
 
 .right-section {
     flex: 1; /* Takes up half the screen */
-    background: url('/static/images/right side new.png') no-repeat center center/cover; /* Replace with your image */
+    
     background-color: white; /* Fallback if the image doesn't load */
     display: flex;
     flex-direction: column;

@@ -62,3 +62,5 @@ def change_password(request):
     else:
         form = PasswordChangingForm(user=request.user)
     return render(request, 'registration/change_password.html', {'form': form})
+def dashboard(request):
+    return render(request, 'base.html')

@@ -1,0 +1,28 @@
+<h2>All Orders</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.product.product_name }}</td>
+            <td>{{ order.quantity }}</td>
+            <td>{{ order.status }}</td>
+            <td>
+                {% if order.status == 'Pending' %}
+                <a href="{% url 'update_order_status' order.id 'Approved' %}" class="btn btn-success btn-sm">Approve</a>
+                <a href="{% url 'update_order_status' order.id 'Rejected' %}" class="btn btn-danger btn-sm">Reject</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
