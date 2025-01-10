@@ -125,4 +125,8 @@ label {
     color: #0096f4; /* Set label color */
 }
 
+button.loginform{
+    background-color: #0096f4;
+    color: white;   
+}
 /* If you want to target specific form labels, you can use a class or ID */

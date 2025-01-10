@@ -1,0 +1,23 @@
+{% load static %}
+{% extends admin_base.html%}
+
+<h2>Products</h2>
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.product_name }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.product_quantity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'add_product' %}" class="btn btn-success">Add New Product</a>

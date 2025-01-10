@@ -1,3 +1,9 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+
+{% block content %}
+
 <h2>All Orders</h2>
 <table class="table">
     <thead>
@@ -12,12 +18,12 @@
     <tbody>
         {% for order in orders %}
         <tr>
-            <td>{{ order.user.username }}</td>
+            <td>{{ order.user.fullname }}</td>
             <td>{{ order.product.product_name }}</td>
             <td>{{ order.quantity }}</td>
             <td>{{ order.status }}</td>
             <td>
-                {% if order.status == 'Pending' %}
+                {% if order.status|lower == 'pending' %}
                 <a href="{% url 'update_order_status' order.id 'Approved' %}" class="btn btn-success btn-sm">Approve</a>
                 <a href="{% url 'update_order_status' order.id 'Rejected' %}" class="btn btn-danger btn-sm">Reject</a>
                 {% endif %}
@@ -26,3 +32,6 @@
         {% endfor %}
     </tbody>
 </table>
+
+
+{% endblock %}

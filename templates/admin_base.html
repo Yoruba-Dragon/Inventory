@@ -93,7 +93,7 @@
             width: calc(100% - 350px); /* Ensures the content fits within the remaining space */
             overflow-x: auto; /* Adds horizontal scrolling if content overflows */
             box-sizing: border-box; /* Includes padding in the width calculation */
-            margin-top : 20px;
+            margin-top : 2px;
         }
 
         thead {
@@ -123,10 +123,10 @@
     </div>
     <div class="sidebar">
         <img src="{{ user.picture.url }}" alt="User Picture">
-        <h2>{{ user.fullname }}</h2>
-        <a href="{% url 'dashboard' %}">Dashboard</a>
-        <a href="{% url 'order_list' %}"> My Orders</a>
-        <a href="{% url 'create_order' %}">New order</a> 
+        <h2>{{ user.username }}</h2>
+        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'add_product' %}"> Add Merch</a>
+        <a href="{% url 'admin_order_list' %}">Orders</a> 
         <button class="logout-btn" onclick="location.href='{% url 'logout' %}'"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12.5 10V8H7.5V6H12.5V4L15.5 7L12.5 10ZM11.5 9V13H6.5V16L0.5 13V0H11.5V5H10.5V1H2.5L6.5 3V12H10.5V9H11.5Z" fill="#0696EF"/>
             </svg>

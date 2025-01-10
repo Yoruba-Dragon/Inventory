@@ -1,7 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
 <h2>Create Order</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="mb-3">
+        <label for="product-select" class="form-label">Select merch</label>
+        <select id="product-select" name="product" class="form-select" required>
+            <option value="" disabled selected>Select merch</option>
+            {% for product in products %}
+            <option value="{{ product.id }}">{{ product.product_name }} </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" id="quantity" name="quantity" class="form-control" min="1" required>
+    </div>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+    <button type="submit"  style="background-color: #0096f7 ; padding: 5px; color: white;  ; border: none; border-radius: 40px; ">Submit</button>
 </form>
 
+{% endblock %}

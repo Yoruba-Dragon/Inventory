@@ -4,21 +4,20 @@ from .models import CustomUser, Products
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    # Define which fields are displayed in the user detail page
-    fieldsets = UserAdmin.fieldsets + (
-        ('Additional Info', {'fields': ('department', 'picture')}),
+    fieldsets = (
+        (None, {'fields': ('email', 'fullname', 'password', 'department', 'picture')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
-    
-    # Define which fields are displayed when adding a new user
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Additional Info', {'fields': ('department', 'picture')}),
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'fullname', 'password1', 'password2', 'department', 'picture', 'is_staff', 'is_active')}
+        ),
     )
-    
-    # Optionally, you can add a list_display to show additional fields in the user list
-    list_display = ('username', 'email', 'department', 'is_staff', 'is_active')
-
-    # Optionally, you can add search_fields to allow searching by username or email
-    search_fields = ('username', 'email')
+    list_display = ('email', 'fullname', 'is_staff', 'is_active')
+    search_fields = ('email', 'fullname')
+    ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Products)

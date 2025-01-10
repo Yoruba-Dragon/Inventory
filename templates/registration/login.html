@@ -25,21 +25,17 @@
     </div>
     <div class="right-section">
       <div class="form">
-        <form method='POST' action="{% url 'login' %}">
-            {% csrf_token %}
-            <div class="mb-4">
-                
-                <input type="text" id="username" name="username" placeholder= "Username" class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-            </div>
-
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-gray-700" ></label>
-                <input type="password" id="password" name="password" placeholder="Password" class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-            </div>
-            {{form.errors}}
-            <div class="submit">
-                <button type="submit" class="submit-button">Login</button>
-                {% comment %} Dont have an Account?<a href="{% url 'signup' %}" class="ml-1 text-blue-700">Create</a> {% endcomment %}
+        <form method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="mb-4">
+              <input type="email" name="username" class="form-control" placeholder="Email" required>
+          </div>
+          <div class="mb-4">
+              <input type="password" name="password" class="form-control" placeholder="Password" required>
+          </div>
+          <button type="submit" class="loginform">Login</button>
+      </form>
+                Dont have an Account?<a href="{% url 'signup' %}" class="ml-1 text-blue-700">Create</a>
             </div>
         </form>
       </div>
