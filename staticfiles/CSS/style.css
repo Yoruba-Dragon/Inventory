@@ -6,6 +6,20 @@ body {
     height: 100vh; /* Full screen height */
 }
 
+header {
+    position: absolute; /* Makes the logo float at the top-left */
+    top: 20px; /* Adjust space from the top */
+    left: 20px; /* Adjust space from the left */
+    z-index: 10; /* Ensure the logo is above other elements */
+}
+
+.logo {
+    width: 150px; /* Adjust the size of the logo */
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+    margin: 0; /* No extra margin */
+}
+
 .left-section {
     flex: 1; /* Takes up half the screen */
     background: url('/static/images/pecan\ bg.jpg') no-repeat center center/cover; /* Replace with your image */
@@ -37,7 +51,7 @@ body {
 
 .right-section {
     flex: 1; /* Takes up half the screen */
-    background: url('right side.png') no-repeat center center/cover; /* Replace with your image */
+    
     background-color: white; /* Fallback if the image doesn't load */
     display: flex;
     flex-direction: column;
@@ -46,14 +60,11 @@ body {
     position: relative; /* Needed for the overlay to work */
 }
 
-
-
 .right-section h1,
 .right-section p {
     position: relative; /* Ensure text appears above the overlay */
     z-index: 2; /* Text above overlay */
 }
-
 
 button {
     padding: 5px 0; /* Adjusted padding for height */
@@ -66,35 +77,23 @@ button {
     width: 400px; /* Fixed width for both buttons */
     height: 50px;
     text-align: center; /* Center-align text */
-    justify-content:center;
+    justify-content: center;
 }
-.left-section-content{
+
+.left-section-content {
     margin: 0;
     position: relative;
     justify-content: top;
     text-align: left;
-    width: 100%; 
-}
-header {
-    position: absolute; /* Makes the logo float at the top-left */
-    top: 20px; /* Adjust space from the top */
-    left: 20px; /* Adjust space from the left */
-    z-index: 10; /* Ensure the logo is above other elements */
-  }
-  
-.logo {
-    width: 200px; /* Adjust the size of the logo */
-  }
-  
-  
-.title {
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-   
-    margin: 30px;
+    width: 100%;
 }
 
+.title {
+    font-size: 40px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 30px;
+}
 
 button.login {
     background-color: #0096f4;
@@ -106,13 +105,28 @@ button.signup {
     color: #0096f4;
     border: 2px solid #0096f4; /* Add a border for contrast */
 }
+
 button.login:hover {
     background-color: #fff;
     color: #0096f4;
     border: 2px solid #0096f4;
 }
+
 button.signup:hover {
     background-color: #0096f4;
     color: white;
     border: none; /* Remove border on hover */
 }
+/* Change font family and size for form labels */
+label {
+    font-family: 'Poppins', sans-serif; /* Change to your desired font */
+    font-size: 16px; /* Adjust the font size */
+    font-weight: 500; /* Adjust the font weight */
+    color: #0096f4; /* Set label color */
+}
+
+button.loginform{
+    background-color: #0096f4;
+    color: white;   
+}
+/* If you want to target specific form labels, you can use a class or ID */
