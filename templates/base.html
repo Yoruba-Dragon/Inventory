@@ -40,9 +40,8 @@
       .sidebar img {
         width: 80px;
         height: 80px;
-        border-radius: 80%;
-        background-color: lightgray;
-        margin-top: 5px;
+        border-radius: 40px; /* No rounded corners */
+        margin-top: 5px; /* Adjust this if needed */
       }
       .sidebar-nav {
         background-color: #009bf7;
@@ -130,7 +129,10 @@
       {% if user.picture %}
       <img src="{{ user.picture.url }}" alt="Profile Picture" />
       {% else %}
-      <img src="/static/default-profile.png" alt="Default Profile Picture" />
+      <img
+        src="{% static 'default-profile.png' %}"
+        alt="Default Profile Picture"
+      />
       {% endif %}
       <h2>{{ user.fullname }}</h2>
       <a href="{% url 'dashboard' %}">Dashboard</a>
