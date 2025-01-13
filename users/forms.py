@@ -10,7 +10,7 @@ class CustomUserCreationForm(UserCreationForm):
     password1= forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter Password'}),
     password2= forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
     department = forms.Select(attrs={'class': 'form-control', 'placeholder': 'Department'}),
-    picture = forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+    picture = forms.ClearableFileInput(attrs={'required': False}),
     class Meta:
        
         model = CustomUser

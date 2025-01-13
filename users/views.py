@@ -113,4 +113,13 @@ def change_password(request):
     return render(request, 'registration/change_password.html', {'form': form})
 def dashboard(request):
     return render(request, 'base.html')
-
+def update_profile(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+    else:
+        form =CustomUserCreationForm(instance=request.user)
+    return render(request, 'update_profile.html', {'form': form})
