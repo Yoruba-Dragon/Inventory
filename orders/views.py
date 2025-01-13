@@ -91,20 +91,26 @@ def update_order_status(request, order_id, status):
     list(storage)  # Consume and clear all messages
 
     if status == 'approved':
-        if hasattr(order, 'can_approve') and callable(order.can_approve) and order.can_approve():
-            # Deduct the product quantity
-            order.product.product_quantity -= order.quantity
-            order.product.save()
+        if hasattr(order, 'can_approve') and callable(order.can_approve):
+            print(f"Product Quantity: {order.product.product_quantity}, Order Quantity: {order.quantity}")
+            if order.can_approve():
+                # Deduct the product quantity
+                order.product.product_quantity -= order.quantity
+                order.product.save()
 
-            # Update order status
-            order.status = 'approved'
-            order.save()
+                # Update order status
+                order.status = 'approved'
+                order.save()
 
-            # Success message
-            messages.success(request, f'Order #{order.id} approved successfully.')
+                # Success message
+                messages.success(request, f'Order #{order.id} approved successfully.')
+            else:
+                # Error if product quantity is insufficient
+                messages.error(request, f'Cannot approve order #{order.id}: Insufficient product quantity.')
+                print("Approval failed: Insufficient product quantity")
         else:
-            # Error if product quantity is insufficient or can_approve fails
-            messages.error(request, f'Cannot approve order #{order.id}: Insufficient product quantity.')
+            print("Approval failed: can_approve method missing or invalid")
+            messages.error(request, "Cannot approve order: Invalid approval logic.")
     elif status == 'rejected':
         # Update order status to rejected
         order.status = 'rejected'
