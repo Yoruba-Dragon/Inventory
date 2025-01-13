@@ -28,7 +28,7 @@
         color: white;
         position: fixed;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
       }
       .logo {
@@ -89,12 +89,11 @@
       .content {
         margin-left: 350px; /* Matches the width of the sidebar */
         padding: 20px;
-        width: calc(
-          100% - 350px
-        ); /* Ensures the content fits within the remaining space */
+        width: calc(100% - 350px);
         overflow-x: auto; /* Adds horizontal scrolling if content overflows */
         box-sizing: border-box; /* Includes padding in the width calculation */
         margin-top: 2px;
+        flex-direction: row;
       }
 
       thead {
