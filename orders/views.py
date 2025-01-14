@@ -124,3 +124,24 @@ def update_order_status(request, order_id, status):
 
     # Redirect back to the admin order list
     return redirect('admin_order_list')
+
+
+@login_required
+def merch_list(request):
+
+    products= Products.objects.all()
+
+    paginator_all = Paginator(products, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator_all.get_page(page_number)
+
+    
+    context = {
+        'page_obj': page_obj,
+        'products': products,
+    }
+
+    return render (request, 'merch.html', context)
+
+# def edit_product(request):
+    

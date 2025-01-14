@@ -44,11 +44,7 @@ CATEGORY1 = (
     
 )
 
-CATEGORY2 = (
-    ("Stationary", "Stationary"),
-    ("Office Equipment", "Office Equipment"),
-    ("Clothes", "Clothes"),
-)
+
 class CustomUser(AbstractUser):
     fullname = models.CharField(max_length=150, verbose_name="Full Name")  # New field for full name
     email = models.EmailField(unique=True)  # Use email as the login field
@@ -71,17 +67,33 @@ class CustomUser(AbstractUser):
         verbose_name = "Custom User"
         verbose_name_plural = "Custom Users"
 
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    def save(self, *args, **kwargs):
+        # Format the category name to Init Caps before saving
+        self.name = self.name.title()  # Converts input to Title Case
+        super(Category, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
+
+
 class Products(models.Model):
     product_name = models.CharField(max_length=50, null=True)
     product_description = models.CharField(max_length=200, null=True)
     product_quantity = models.IntegerField()
-    category = models.CharField(max_length=50, choices=CATEGORY2, null=True)
-
+    product_image= models.ImageField(upload_to="Pictures", blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products", null=True)
     def __str__(self):
         return self.product_name
 
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-
 

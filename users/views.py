@@ -4,11 +4,12 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .forms import ProductsForm, CustomUserCreationForm, PasswordChangingForm
-from .models import Products
+from .forms import ProductsForm, CustomUserCreationForm, PasswordChangingForm, CategoryForm
+from .models import Products,Category
 from django.contrib.auth.decorators import user_passes_test
 from orders.models import Order
-
+from django.http import JsonResponse
+from django.db.models import Sum, Count
 
 def home(request):
     return render(request, 'home.html')
@@ -17,52 +18,50 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def admin_dashboard(request):
-    # Fetch all orders
-    pending_orders = Order.objects.filter(status='pending').order_by('-created_at')
-    approved_orders = Order.objects.filter(status='approved').order_by('-created_at')
-    rejected_orders = Order.objects.filter(status='rejected').order_by('-created_at')
+    
+    pending_orders = Order.objects.filter( status="Pending").count()
+    completed_orders = Order.objects.filter(status="Completed").count()
 
-    # Handle form submissions for approving/rejecting
-    if request.method == 'POST':
-        order_id = request.POST.get('order_id')
-        action = request.POST.get('action')
-        order = get_object_or_404(Order, id=order_id)
+    # Fetch product quantities
+    product_data = Products.objects.all()
+    total_products = product_data.aggregate(Sum('product_quantity'))['product_quantity__sum'] or 0
 
-        if action == 'approve':
-            if order.quantity <= order.product.product_quantity:
-                order.status = 'approved'
-                order.product.product_quantity -= order.quantity
-                order.product.save()
-            else:
-                order.status = 'rejected'
-        elif action == 'reject':
-            order.status = 'rejected'
+    # Analytics: Top 5 products with the highest quantity
+    top_products = Products.objects.order_by('-product_quantity')[:5]
 
-        order.save()
-        return redirect('admin_dashboard')
-
-    # Fetch all products
-    products = Products.objects.all()
+    # Analytics: Total categories
+    total_categories = Products.objects.values('category').distinct().count()
 
     context = {
-        'pending_orders': pending_orders,
-        'approved_orders': approved_orders,
-        'rejected_orders': rejected_orders,
-        'products': products,
+        "pending_orders": pending_orders,
+        "completed_orders": completed_orders,
+        "total_products": total_products,
+        "top_products": top_products,
+        "total_categories": total_categories,
     }
-    return render(request, 'admin_dashboard.html', context)
+    return render(request, "admin_dashboard.html", context)
+
 
 @user_passes_test(is_admin)
 def add_product(request):
-    if request.method == 'POST':
-        form = ProductsForm(request.POST)
+    if request.method == "POST":
+        form =ProductsForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('admin_dashboard')  # Redirect to the admin dashboard after adding a product
+            product = form.save(commit=False)
+            category_id = request.POST.get("category")
+            try:
+                category = Category.objects.get(id=category_id)
+                product.category = category  # Assign the selected category
+                product.save()
+                return redirect("admin_dashboard")  # Redirect after successful save
+            except Category.DoesNotExist:
+                form.add_error("category", "Selected category does not exist.")
+        else:
+            return render(request, "add_product.html", {"form": form, "categories": Category.objects.all()})
     else:
         form = ProductsForm()
-
-    return render(request, 'add_product.html', {'form': form})
+    return render(request, "add_product.html", {"form": form, "categories": Category.objects.all()})
+    
 
 def login(request):
     if request.method == 'POST':
@@ -123,3 +122,26 @@ def update_profile(request):
     else:
         form =CustomUserCreationForm(instance=request.user)
     return render(request, 'update_profile.html', {'form': form})
+
+
+@user_passes_test(lambda u: u.is_staff)  # Restrict to admin users
+def add_category_ajax(request):
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save()
+            return JsonResponse({"success": True, "category_name": category.name, "category_id": category.id})
+        else:
+            return JsonResponse({"success": False, "errors": form.errors})
+    return JsonResponse({"success": False, "message": "Invalid request."})
+@user_passes_test(lambda u: u.is_staff)
+def delete_category_ajax(request):
+    if request.method == "POST":
+        category_id = request.POST.get("category_id")
+        try:
+            category = Category.objects.get(id=category_id)
+            category.delete()
+            return JsonResponse({"success": True, "category_id": category_id})
+        except Category.DoesNotExist:
+            return JsonResponse({"success": False, "errors": "Category not found."})
+    return JsonResponse({"success": False, "errors": "Invalid request method."})

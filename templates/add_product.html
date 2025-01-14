@@ -1,18 +1,249 @@
-{% extends 'admin_base.html' %}
-
-{% block content %}
+{% extends 'admin_base.html' %} {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Add Product</h1>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary w-100 mt-3">Add Product</button>
-            </form>
+  <h1 class="text-center">Manage Products</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <!-- Main Product Form -->
+      <form
+        method="post"
+        enctype="multipart/form-data"
+        id="productForm"
+        class="border p-4 rounded shadow-sm"
+      >
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="productName" class="form-label">Product Name</label>
+          <input
+            type="text"
+            id="productName"
+            name="product_name"
+            class="form-control"
+            placeholder="Enter product name"
+            required
+          />
         </div>
+
+        <div class="mb-3">
+          <label for="productDescription" class="form-label"
+            >Product Description</label
+          >
+          <textarea
+            id="productDescription"
+            name="product_description"
+            class="form-control"
+            placeholder="Enter product description"
+            required
+          ></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="productQuantity" class="form-label"
+            >Product Quantity</label
+          >
+          <input
+            type="number"
+            id="productQuantity"
+            name="product_quantity"
+            class="form-control"
+            placeholder="Enter quantity"
+            required
+          />
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="mb-3">
+          <label for="productCategoryDropdown" class="form-label"
+            >Category</label
+          >
+          <select
+            id="productCategoryDropdown"
+            name="category"
+            class="form-select"
+            required
+          >
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Manage Categories Button -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-toggle="modal"
+            data-bs-target="#manageCategoryModal"
+          >
+            Manage Categories
+          </button>
+          <button type="submit" class="btn btn-primary">Add Product</button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 
+<!-- Modal for Managing Categories -->
+<div
+  class="modal fade"
+  id="manageCategoryModal"
+  tabindex="-1"
+  aria-labelledby="manageCategoryModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="manageCategoryModalLabel">
+          Manage Categories
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- Add Category Section -->
+          <div class="col-md-6">
+            <h5>Add Category</h5>
+            <form id="addCategoryForm" class="mt-3">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="categoryName" class="form-label"
+                  >Category Name</label
+                >
+                <input
+                  type="text"
+                  id="categoryName"
+                  name="name"
+                  class="form-control"
+                  placeholder="Enter category name"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-success w-100">Add</button>
+            </form>
+          </div>
 
+          <!-- Delete Category Section -->
+          <div class="col-md-6">
+            <h5>Delete Category</h5>
+            <form id="deleteCategoryForm" class="mt-3">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="deleteCategoryDropdown" class="form-label"
+                  >Select Category</label
+                >
+                <select
+                  id="deleteCategoryDropdown"
+                  name="category_id"
+                  class="form-select"
+                  required
+                >
+                  {% for category in categories %}
+                  <option value="{{ category.id }}">{{ category.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-danger w-100">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback Section -->
+<div
+  id="feedbackMessage"
+  class="alert d-none fixed-bottom mb-3 mx-auto text-center w-50"
+  role="alert"
+></div>
+
+<!-- JavaScript for Interactivity -->
+<script>
+  // Feedback Message
+  function showFeedback(message, isError = false) {
+    const feedback = document.getElementById("feedbackMessage");
+    feedback.textContent = message;
+    feedback.classList.remove("d-none", "alert-success", "alert-danger");
+    feedback.classList.add(isError ? "alert-danger" : "alert-success");
+    setTimeout(() => feedback.classList.add("d-none"), 3000);
+  }
+
+  // Add Category AJAX
+  document.getElementById("addCategoryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch("{% url 'add_category_ajax' %}", {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{ csrf_token }}" },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const dropdown = document.getElementById("productCategoryDropdown");
+          const deleteDropdown = document.getElementById(
+            "deleteCategoryDropdown"
+          );
+          const option = document.createElement("option");
+          option.value = data.category_id;
+          option.textContent = data.category_name;
+
+          dropdown.appendChild(option);
+          deleteDropdown.appendChild(option.cloneNode(true));
+
+          showFeedback("Category added successfully!");
+          form.reset();
+        } else {
+          showFeedback("Error adding category.", true);
+        }
+      })
+      .catch(() => showFeedback("An error occurred.", true));
+  });
+
+  // Delete Category AJAX
+  document
+    .getElementById("deleteCategoryForm")
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      fetch("{% url 'delete_category_ajax' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const dropdown = document.getElementById("productCategoryDropdown");
+            const deleteDropdown = document.getElementById(
+              "deleteCategoryDropdown"
+            );
+
+            [dropdown, deleteDropdown].forEach((select) => {
+              const optionToRemove = select.querySelector(
+                `option[value="${data.category_id}"]`
+              );
+              if (optionToRemove) optionToRemove.remove();
+            });
+
+            showFeedback("Category deleted successfully!");
+          } else {
+            showFeedback("Error deleting category.", true);
+          }
+        })
+        .catch(() => showFeedback("An error occurred.", true));
+    });
+</script>
 {% endblock %}

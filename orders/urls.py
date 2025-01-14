@@ -6,4 +6,5 @@ urlpatterns = [
     path('my-orders/', views.orders_list, name='order_list'),
     path('admin/orders/', views.admin_order_list, name='admin_order_list'),
     path('admin/orders/<int:order_id>/<str:status>/', views.update_order_status, name='update_order_status'),
+    path('merch_list/', views.merch_list, name= 'merch_list')
 ]

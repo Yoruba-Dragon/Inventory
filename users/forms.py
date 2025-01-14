@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from .models import CustomUser, Products
+from .models import CustomUser, Products, Category
 from django.contrib.auth.forms import AuthenticationForm
 class CustomUserCreationForm(UserCreationForm):
 
@@ -93,3 +93,19 @@ class ProductsForm(forms.ModelForm):
         if quantity <= 0:
             raise forms.ValidationError("Quantity must be a positive number.")
         return quantity
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['fullname', 'picture']
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ["name"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter category name"}),
+        }
+
+
+        
