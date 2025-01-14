@@ -19,8 +19,8 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def admin_dashboard(request):
     
-    pending_orders = Order.objects.filter( status="Pending").count()
-    completed_orders = Order.objects.filter(status="Completed").count()
+    pending_orders = Order.objects.filter( status="pending").count()
+    completed_orders = Order.objects.filter(status="approved").count()
 
     # Fetch product quantities
     product_data = Products.objects.all()
@@ -45,23 +45,19 @@ def admin_dashboard(request):
 @user_passes_test(is_admin)
 def add_product(request):
     if request.method == "POST":
-        form =ProductsForm(request.POST, request.FILES)
+        form = ProductsForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save(commit=False)
-            category_id = request.POST.get("category")
-            try:
-                category = Category.objects.get(id=category_id)
-                product.category = category  # Assign the selected category
-                product.save()
-                return redirect("admin_dashboard")  # Redirect after successful save
-            except Category.DoesNotExist:
-                form.add_error("category", "Selected category does not exist.")
+            form.save()
+            messages.success(request, "Product added successfully!")
+            return redirect("admin_dashboard")  # Redirect after successful save
         else:
-            return render(request, "add_product.html", {"form": form, "categories": Category.objects.all()})
+            messages.error(request, "There was an error adding the product. Please check the form.")
     else:
         form = ProductsForm()
-    return render(request, "add_product.html", {"form": form, "categories": Category.objects.all()})
-    
+
+    # Fetch categories to pass to the template
+    categories = Category.objects.all()
+    return render(request, "add_product.html", {"form": form, "categories": categories})
 
 def login(request):
     if request.method == 'POST':
@@ -145,3 +141,36 @@ def delete_category_ajax(request):
         except Category.DoesNotExist:
             return JsonResponse({"success": False, "errors": "Category not found."})
     return JsonResponse({"success": False, "errors": "Invalid request method."})
+
+
+
+def edit_product(request, pk):
+    # Get the product instance
+    product = get_object_or_404(Products, pk=pk)
+    categories = Category.objects.all()
+
+    if request.method == 'POST':
+        if 'save_changes' in request.POST:
+            # Handle saving changes
+            form = ProductsForm(request.POST, request.FILES, instance=product)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Product updated successfully!")
+                return redirect('admin_dashboard')
+            else:
+                messages.error(request, "Please correct the errors below.")
+        elif 'delete_product' in request.POST:
+            # Handle product deletion
+            product.delete()
+            messages.success(request, "Product deleted successfully!")
+            return redirect('admin_dashboard')
+    else:
+        # Instantiate the form with the product instance
+        form = ProductsForm(instance=product)
+
+    return render(request, 'edit_product.html', {
+        'form': form,
+        'product': product,
+        'categories': categories,
+    })
+    

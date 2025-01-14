@@ -75,24 +75,16 @@ class PasswordChangingForm(PasswordChangeForm):
 class ProductsForm(forms.ModelForm):
     class Meta:
         model = Products
-        fields = '__all__'
-        widgets = {
-            'product_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'product_description': forms.Textarea(attrs={'class': 'form-control'}),
-            'product_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-            'category': forms.Select(attrs={'class': 'form-control'})
-        }
-        help_texts = {
-            'product_name': 'Enter the name of the product.',
-            'product_description': 'Provide a brief description of the product.',
-            'product_quantity': 'Enter the available quantity of the product.',
-        }
+        fields = ['product_name', 'product_description', 'product_quantity', 'category', 'product_image']
 
     def clean_product_quantity(self):
         quantity = self.cleaned_data.get('product_quantity')
         if quantity <= 0:
             raise forms.ValidationError("Quantity must be a positive number.")
         return quantity
+    
+
+
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
