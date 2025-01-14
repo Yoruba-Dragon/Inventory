@@ -34,7 +34,7 @@ def admin_dashboard(request):
         "completed_orders": completed_orders,
         "total_products": total_products,
         "top_products": top_products,
-        "total_categories": total_categories,
+      
     }
     return render(request, "admin_dashboard.html", context)
 
