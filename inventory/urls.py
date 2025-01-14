@@ -31,6 +31,10 @@ urlpatterns = [
     path('dashboard/', user_views.dashboard, name='dashboard'),
     path('admin-dashboard/', user_views.admin_dashboard, name='admin_dashboard'),  # Admin dashboard from orders views
     path('add-product/', user_views.add_product, name='add_product'),  # Add product from orders views
+    path('profile/update/', user_views.update_profile, name='update_profile'),
+    path("add-category-ajax/", user_views.add_category_ajax, name="add_category_ajax"),
+    path("delete-category-ajax/", user_views.delete_category_ajax, name="delete_category_ajax"),
+     path('products/edit/<int:pk>/', user_views.edit_product, name='edit_product'),
 ]
 
 # Static and media file handling
