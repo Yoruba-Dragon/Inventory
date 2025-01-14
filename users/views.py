@@ -29,9 +29,6 @@ def admin_dashboard(request):
     # Analytics: Top 5 products with the highest quantity
     top_products = Products.objects.order_by('-product_quantity')[:5]
 
-    # Analytics: Total categories
-    total_categories = Products.objects.values('category').distinct().count()
-
     context = {
         "pending_orders": pending_orders,
         "completed_orders": completed_orders,
