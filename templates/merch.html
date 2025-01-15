@@ -1,23 +1,50 @@
-{% extends 'admin_base.html'%} {% block content %}
+{% extends 'admin_base.html' %} {% load static %} {% block content %}
 <h2>Merch</h2>
 <table class="table">
-  <thead class="table-dark">
+  <thead>
     <tr>
+      <th>#</th>
+      <th>Image</th>
       <th>Product Name</th>
-      <th>Category</th>
+      <th>Description</th>
       <th>Quantity</th>
-      <th></th>
+      <th>Category</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     {% for product in products %}
     <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>
+        {% if product.product_image %}
+        <img
+          src="{{ product.product_image.url }}"
+          alt="{{ product.product_name }}"
+          class="img-thumbnail"
+          style="max-width: 100px; max-height: 100px"
+        />
+        {% else %}
+        <img
+          src="{% static 'images/default-product.png' %}"
+          alt="Default Product Image"
+          class="img-thumbnail"
+          style="max-width: 100px; max-height: 100px"
+        />
+        {% endif %}
+      </td>
       <td>{{ product.product_name }}</td>
-      <td>{{ product.category }}</td>
+      <td>{{ product.product_description }}</td>
       <td>{{ product.product_quantity }}</td>
-      <td><a href="" class="btn btn-danger"> Edit</a></td>
+      <td>{{ product.category }}</td>
+      <td>
+        <a
+          href="{% url 'edit_product' product.pk %}"
+          class="btn btn-primary btn-sm"
+          >Edit</a
+        >
+      </td>
     </tr>
-
     {% endfor %}
   </tbody>
 </table>
