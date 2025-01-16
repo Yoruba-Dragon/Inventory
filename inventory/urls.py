@@ -34,7 +34,9 @@ urlpatterns = [
     path('profile/update/', user_views.update_profile, name='update_profile'),
     path("add-category-ajax/", user_views.add_category_ajax, name="add_category_ajax"),
     path("delete-category-ajax/", user_views.delete_category_ajax, name="delete_category_ajax"),
-     path('products/edit/<int:pk>/', user_views.edit_product, name='edit_product'),
+    path('products/edit/<int:pk>/', user_views.edit_product, name='edit_product'),
+    
+    path('confirm-received/<int:order_id>/', order_views.confirm_order_received, name='confirm_order_received'),
 ]
 
 # Static and media file handling

@@ -13,13 +13,13 @@
       </div>
     </div>
 
-    <!-- Total Products -->
+    <!-- Responded Orders -->
     <div class="col-md-3">
-      <div class="card shadow-lg text-white bg-primary mb-3">
+      <div class="card shadow-lg text-white bg-secondary mb-3">
         <div class="card-body">
-          <h5 class="card-title">Total Products</h5>
-          <p class="card-text display-3 text-center">{{ total_products }}</p>
-          <p class="card-footer text-center">Available in stock</p>
+          <h5 class="card-title">Responded Orders</h5>
+          <p class="card-text display-3 text-center">{{ responded_orders }}</p>
+          <p class="card-footer text-center">Approved or Rejected</p>
         </div>
       </div>
     </div>
@@ -31,6 +31,17 @@
           <h5 class="card-title">Completed Orders</h5>
           <p class="card-text display-3 text-center">{{ completed_orders }}</p>
           <p class="card-footer text-center">Successful Orders</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Products -->
+    <div class="col-md-3">
+      <div class="card shadow-lg text-white bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Total Products</h5>
+          <p class="card-text display-3 text-center">{{ total_products }}</p>
+          <p class="card-footer text-center">Available in stock</p>
         </div>
       </div>
     </div>
@@ -98,12 +109,20 @@
   const ordersOverviewChart = new Chart(ordersOverviewCtx, {
     type: 'pie',
     data: {
-      labels: ['Pending Orders', 'Completed Orders'],
+      labels: ['Pending Orders', 'Responded Orders', 'Completed Orders'],
       datasets: [{
         label: 'Orders Overview',
-        data: [{{ pending_orders }}, {{ completed_orders }}],
-        backgroundColor: ['rgba(255, 193, 7, 0.7)', 'rgba(40, 167, 69, 0.7)'],
-        borderColor: ['rgba(255, 193, 7, 1)', 'rgba(40, 167, 69, 1)'],
+        data: [{{ pending_orders }}, {{ responded_orders }}, {{ completed_orders }}],
+        backgroundColor: [
+          'rgba(255, 193, 7, 0.7)',  // Pending Orders
+          'rgba(108, 117, 125, 0.7)',  // Responded Orders
+          'rgba(40, 167, 69, 0.7)'  // Completed Orders
+        ],
+        borderColor: [
+          'rgba(255, 193, 7, 1)',
+          'rgba(108, 117, 125, 1)',
+          'rgba(40, 167, 69, 1)'
+        ],
         borderWidth: 1
       }]
     },

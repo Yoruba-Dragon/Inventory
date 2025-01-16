@@ -16,7 +16,12 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     quantity = models.PositiveIntegerField()
+    user_confirmed = models.BooleanField(default=False) 
     notified = models.BooleanField(default=False)  # Track if the user has been notified
+
+    def is_completed(self):
+        return self.status == "approved" and self.user_confirmed
+    
     def can_approve(self):
         """Check if the order can be approved based on product availability."""
         return self.product.product_quantity >= self.quantity

@@ -18,11 +18,12 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def admin_dashboard(request):
-    
-    pending_orders = Order.objects.filter( status="pending").count()
-    completed_orders = Order.objects.filter(status="approved").count()
+    # Order data
+    pending_orders = Order.objects.filter(status="pending").count()
+    responded_orders = Order.objects.filter(status__in=["approved", "rejected"]).count()
+    completed_orders = Order.objects.filter(status="completed").count()
 
-    # Fetch product quantities
+    # Product data
     product_data = Products.objects.all()
     total_products = product_data.aggregate(Sum('product_quantity'))['product_quantity__sum'] or 0
 
@@ -30,17 +31,17 @@ def admin_dashboard(request):
     top_products = Products.objects.order_by('-product_quantity')[:5]
 
     # Analytics: Total categories
-    total_categories = Products.objects.values('category').distinct().count()
+    total_categories = Category.objects.count()
 
     context = {
         "pending_orders": pending_orders,
+        "responded_orders": responded_orders,
         "completed_orders": completed_orders,
         "total_products": total_products,
         "top_products": top_products,
         "total_categories": total_categories,
     }
     return render(request, "admin_dashboard.html", context)
-
 
 @user_passes_test(is_admin)
 def add_product(request):
@@ -107,7 +108,8 @@ def change_password(request):
         form = PasswordChangingForm(user=request.user)
     return render(request, 'registration/change_password.html', {'form': form})
 def dashboard(request):
-    return render(request, 'base.html')
+    return render(request, 'dashboard.html')
+
 def update_profile(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES, instance=request.user)
@@ -130,6 +132,7 @@ def add_category_ajax(request):
         else:
             return JsonResponse({"success": False, "errors": form.errors})
     return JsonResponse({"success": False, "message": "Invalid request."})
+
 @user_passes_test(lambda u: u.is_staff)
 def delete_category_ajax(request):
     if request.method == "POST":
